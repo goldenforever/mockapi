@@ -1,0 +1,106 @@
+extends layout
+
+block content
+    h1 Quick API Simulator
+
+    script.
+        window._apidata = JSON.parse(decodeURIComponent('!{data}'));
+
+    .container
+
+    script.
+        function gen(data) {
+          var cont = document.querySelector('.container');
+          var htmlStr = 'Paths &nbsp;<input type="button" value="+" onclick="addPath()"> &nbsp; <input id="save" type="button" value="SAVE" onclick="location.href=\'update?_new=\'+encodeURIComponent(JSON.stringify(get()))">';
+          for (var i = 0; i < data.length; i++) {
+            var d = data[i];
+            htmlStr += '<div class="path"><div class="url"><label>URL Path</label><input type="text"></div>';
+            htmlStr += '<div class="conditions">Conditions <input type="button" onclick="addCond(this)" value="+">';
+            for (var j = 0; j < d.conditions.length; j++) {
+              var c = d.conditions[j];
+              htmlStr += '<div class="condition"><div class="expr">';
+              htmlStr += '<label>Return expression (use JavaScript and _input) ' + (j + 1) + '</label>'
+              htmlStr += '<input type="text"></div>';
+              htmlStr += '<div class="cond"><label>Condition expression (use JavaScript and _input) ' + (j + 1) + '</label>'
+              htmlStr += '<input type="text"></div></div>';
+            }
+            htmlStr += '</div></div></div>';
+          }
+          cont.innerHTML = htmlStr;
+          for (var i = 0; i < data.length; i++) {
+            var d = data[i];
+            var paths = cont.querySelectorAll('.path');
+            var path = paths[i];
+            var url = path.querySelector('.url input');
+            url.value = d.path;
+            var conditions = path.querySelectorAll('.conditions .condition');
+            for (var j=0; j<conditions.length; j++) {
+              conditions[j].querySelector('.expr input').value = d.conditions[j].return;
+              conditions[j].querySelector('.cond input').value = d.conditions[j].condition;
+            }
+          }
+        }
+
+        gen(window._apidata);
+
+        function get() {
+          var arr = [];
+          var cont = document.querySelector('.container');
+          var paths = cont.querySelectorAll('.path');
+          for (var i = 0; i < paths.length; i++) {
+            var obj = {};
+            var path = paths[i];
+            var url = path.querySelector('.url input');
+            if (url.value) {
+              obj.path = url.value;
+              var conditions = path.querySelectorAll('.conditions .condition');
+
+              obj.conditions = [];
+              for (var j = 0; j < conditions.length; j++) {
+                var ret = conditions[j].querySelector('.expr input').value;
+                var cond = conditions[j].querySelector('.cond input').value;
+                if (ret && cond) {
+                  obj.conditions.push({
+                    "return": ret,
+                    "condition": cond
+                  });
+                }
+              }
+              arr.push(obj);
+            }
+          }
+          return arr;
+        }
+
+        function addPath () {
+          var obj = JSON.parse(JSON.stringify(get()));
+
+          obj.push({"path": "","conditions": [{"condition": "","return": ""}]});
+
+          gen(obj);
+        }
+
+        function addCond (el) {
+          el = el.parentNode;
+          var i = el.children.length;
+          var newEl = document.createElement('DIV');
+          newEl.setAttribute('class', 'condition');
+          newEl.innerHTML = '<div class="expr"><label>Return expression (use JavaScript and _input) ' + i + '</label><input type="text"></div><div class="cond"><label>Condition expression (use JavaScript and _input) ' + i + '</label><input type="text"></div>';
+          el.insertBefore(newEl, null)
+        }
+
+        /*function json(obj) {
+            if (!obj) obj = null;
+
+            var el = document.querySelectorAll('.container');
+
+            var len = obj ? obj.length : el.children.length;
+
+            for (var i=0; i<el.length; i++) {
+                var path = el.querySelector('.path input')
+                if (obj) {
+                    path.
+                }
+            }
+        }*/
+
