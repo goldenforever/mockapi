@@ -87,4 +87,7 @@ function onListening () {
     ? 'pipe ' + addr
     : 'port ' + addr.port
   debug('Listening on ' + bind)
+
+  console.log('Settings: http://localhost:' + port)
+  console.log('API Root: http://localhost:' + port + '/api/[path]?_input=[input]')
 }
