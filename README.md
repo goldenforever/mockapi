@@ -17,3 +17,15 @@ Clone repo.
 npm install
 npm start
 ```
+
+Go to http://localhost:1337, change settings.
+
+```
+GET /api/isit2?_input=4 200 12.080 ms - 23
+```
+
+Returns
+```
+it is not 2 but it is 4
+```
+(or whatever you specify in the settings)

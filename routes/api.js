@@ -10,8 +10,6 @@ router.get('/*', function (req, res, next) {
     let url = req.originalUrl.substring(4)
     let queryIndex, queryString = '', queryObj = {};
 
-    console.log(url)
-
     if (~url.indexOf('?')) {
       queryIndex = url.indexOf('?')
       queryString = url.substring(queryIndex + 1)
@@ -25,9 +23,6 @@ router.get('/*', function (req, res, next) {
     let paths = JSON.parse(data)
     for (let i = 0; i < paths.length; i++) {
       let path = paths[i]
-
-      console.log(path.path, url)
-
       if (path.path === url) {
         let conditions = path.conditions
         for (let j = 0; j < conditions.length; j++) {
